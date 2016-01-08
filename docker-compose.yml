@@ -1,0 +1,37 @@
+web:
+  image: nginx
+  links:
+    - app
+  volumes:
+    - ./nginx.conf:/etc/nginx/nginx.conf:ro
+app:
+  image: indiehosters/discourse
+  volumes:
+    - ./data/assets:/usr/src/app/public/assets
+    - ./data/uploads:/usr/src/app/public/uploads
+    - ./data/backups:/usr/src/app/public/backups
+  links:
+    - postgres
+    - redis
+  env_file:
+    - .env
+sidekiq:
+  image: indiehosters/discourse
+  command: sidekiq -c 3 -v
+  links:
+    - postgres
+    - redis
+  env_file:
+    - .env
+  volumes_from:
+    - app
+postgres:
+  image: postgres:9.4
+  environment:
+    - POSTGRES_USER=discourse
+  env_file:
+    - .env
+  volumes:
+    - ./data/postgres:/var/lib/postgresql/data
+redis:
+  image: redis:2.6

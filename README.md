@@ -12,7 +12,7 @@ git clone https://github.com/indiehosters/discourse.git
 cd discourse
 # edit variables:
 vi .env
-docker-compose run discourse bash -c "sleep 3 && rake db:migrate assets:precompile"
+docker-compose run app bash -c "sleep 3 && rake db:migrate assets:precompile"
 docker-compose up
 ```
 

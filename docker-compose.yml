@@ -14,7 +14,7 @@ app:
     - postgres
     - redis
   env_file:
-    - .env
+    - ./env
 sidekiq:
   image: indiehosters/discourse
   command: sidekiq -c 3 -v
@@ -22,7 +22,7 @@ sidekiq:
     - postgres
     - redis
   env_file:
-    - .env
+    - ./env
   volumes_from:
     - app
 postgres:
@@ -30,7 +30,7 @@ postgres:
   environment:
     - POSTGRES_USER=discourse
   env_file:
-    - .env
+    - ./env
   volumes:
     - ./data/postgres:/var/lib/postgresql/data
 redis:

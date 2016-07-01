@@ -17,7 +17,7 @@ app:
     - ./env
 sidekiq:
   image: indiehosters/discourse
-  command: sidekiq -c 3 -v
+  command: bundle exec sidekiq -q critical -q default -q low -v
   links:
     - postgres
     - redis

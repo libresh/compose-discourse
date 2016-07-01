@@ -15,5 +15,6 @@ DISCOURSE_SMTP_DOMAIN=indie.host
 # have to be the same!!!
 # # # # # # # # #
 
+POSTGRES_USER=discourse
 POSTGRES_PASSWORD=d15c0ur53
 DISCOURSE_DB_PASSWORD=d15c0ur53

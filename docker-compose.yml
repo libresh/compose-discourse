@@ -26,7 +26,7 @@ sidekiq:
   volumes_from:
     - app
 postgres:
-  image: postgres:9.4
+  image: postgres:9.5
   env_file:
     - ./env
   volumes:

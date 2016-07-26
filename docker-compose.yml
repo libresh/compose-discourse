@@ -27,6 +27,8 @@ sidekiq:
     - redis
   env_file:
     - ./env
+  environment:
+    - DISCOURSE_HOSTNAME=$HOST
   volumes_from:
     - app
 postgres:

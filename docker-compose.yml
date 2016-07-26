@@ -18,7 +18,7 @@ app:
   env_file:
     - ./env
   environment:
-    - DISCOURSE_HOSTNAME=${HOST}
+    - DISCOURSE_HOSTNAME=$HOST
 sidekiq:
   image: indiehosters/discourse
   command: bundle exec sidekiq -q critical -q default -q low -v

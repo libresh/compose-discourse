@@ -5,7 +5,7 @@ web:
   volumes:
     - ./nginx.conf:/etc/nginx/nginx.conf:ro
   environment:
-    - HOST
+    - VIRTUAL_HOST
 app:
   image: indiehosters/discourse
   volumes:
@@ -18,7 +18,7 @@ app:
   env_file:
     - ./env
   environment:
-    - DISCOURSE_HOSTNAME=$HOST
+    - DISCOURSE_HOSTNAME=$VIRTUAL_HOST
 sidekiq:
   image: indiehosters/discourse
   command: bundle exec sidekiq -q critical -q default -q low -v
@@ -28,7 +28,7 @@ sidekiq:
   env_file:
     - ./env
   environment:
-    - DISCOURSE_HOSTNAME=$HOST
+    - DISCOURSE_HOSTNAME=$VIRTUAL_HOST
   volumes_from:
     - app
 postgres:

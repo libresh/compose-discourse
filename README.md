@@ -10,6 +10,7 @@ Make sure you have [docker-compose](http://docs.docker.com/compose/install/) ins
 ```
 git clone https://github.com/indiehosters/discourse.git
 cd discourse
+echo "POSTGRES_USER=discourse" > env
 docker-compose run app bash -c "sleep 3 && rake db:migrate assets:precompile"
 docker-compose up
 ```

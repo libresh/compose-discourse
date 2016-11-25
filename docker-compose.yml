@@ -1,41 +1,59 @@
-web:
-  image: nginx
-  links:
-    - app
-  volumes:
-    - ./nginx.conf:/etc/nginx/nginx.conf:ro
-  environment:
-    - VIRTUAL_HOST
-app:
-  image: indiehosters/discourse
-  volumes:
-    - ./data/assets:/usr/src/app/public/assets
-    - ./data/uploads:/usr/src/app/public/uploads
-    - ./data/backups:/usr/src/app/public/backups
-  links:
-    - postgres
-    - redis
-  env_file:
-    - ./env
-  environment:
-    - DISCOURSE_HOSTNAME=$VIRTUAL_HOST
-sidekiq:
-  image: indiehosters/discourse
-  command: bundle exec sidekiq -q critical -q default -q low -v
-  links:
-    - postgres
-    - redis
-  env_file:
-    - ./env
-  environment:
-    - DISCOURSE_HOSTNAME=$VIRTUAL_HOST
-  volumes_from:
-    - app
-postgres:
-  image: postgres:9.4.8
-  env_file:
-    - ./env
-  volumes:
-    - ./data/postgres:/var/lib/postgresql/data
-redis:
-  image: redis:3
+version: '2'
+networks:
+  lb_web:
+    external: true
+  back:
+    driver: bridge
+services:
+  web:
+    image: nginx
+    links:
+      - app
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    environment:
+      - VIRTUAL_HOST
+    networks:
+    - back
+    - lb_web
+  app:
+    image: indiehosters/discourse
+    volumes:
+      - ./data/assets:/usr/src/app/public/assets
+      - ./data/uploads:/usr/src/app/public/uploads
+      - ./data/backups:/usr/src/app/public/backups
+    links:
+      - postgres
+      - redis
+    env_file:
+      - ./env
+    environment:
+      - DISCOURSE_HOSTNAME=$VIRTUAL_HOST
+    networks:
+    - back
+  sidekiq:
+    image: indiehosters/discourse
+    command: bundle exec sidekiq -q critical -q default -q low -v
+    links:
+      - postgres
+      - redis
+    env_file:
+      - ./env
+    environment:
+      - DISCOURSE_HOSTNAME=$VIRTUAL_HOST
+    volumes_from:
+      - app
+    networks:
+    - back
+  postgres:
+    image: postgres:9.4.8
+    env_file:
+      - ./env
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    networks:
+    - back
+  redis:
+    image: redis:3
+    networks:
+    - back

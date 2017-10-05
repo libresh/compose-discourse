@@ -2,12 +2,10 @@
 
 PG_PASSWORD=`cat /dev/random | base64 | head -c 20 | xargs`
 
-echo "DISCOURSE_SMTP_ADDRESS=${MAIL_HOST}" > env
-echo "DISCOURSE_SMTP_PORT=587" >> env
-echo "DISCOURSE_SMTP_USER_NAME=${MAIL_USER}" >> env
-echo "DISCOURSE_SMTP_PASSWORD=${MAIL_PASS}" >> env
-echo "POSTGRES_USER=discourse" >> env
-echo "POSTGRES_PASSWORD=${PG_PASSWORD}" >> env
-echo "DISCOURSE_DB_PASSWORD=${PG_PASSWORD}" >> env
+echo "DISCOURSE_SMTP_ADDRESS=${MAIL_HOST}" > .env
+echo "DISCOURSE_SMTP_USER_NAME=${MAIL_USER}" >> .env
+echo "DISCOURSE_SMTP_PASSWORD=${MAIL_PASS}" >> .env
+echo "POSTGRES_PASSWORD=${PG_PASSWORD}" >> .env
+echo "DISCOURSE_DB_PASSWORD=${PG_PASSWORD}" >> .env
 
 VIRTUAL_HOST=${URL} docker-compose run app bash -c "sleep 3 && rake db:migrate assets:precompile"

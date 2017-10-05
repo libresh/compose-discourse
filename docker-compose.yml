@@ -11,8 +11,6 @@ networks:
 services:
   web:
     image: nginx
-    links:
-      - app
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     environment:
@@ -26,9 +24,6 @@ services:
       - ./data/assets:/home/discourse/discourse/public/assets
       - ./data/uploads:/home/discourse/discourse/public/uploads
       - ./data/backups:/home/discourse/discourse/public/backups
-    links:
-      - postgres
-      - redis
     env_file:
       - ./env
     environment:
@@ -38,9 +33,6 @@ services:
   sidekiq:
     image: indiehosters/discourse
     command: bundle exec sidekiq -q critical -q default -q low -v
-    links:
-      - postgres
-      - redis
     env_file:
       - ./env
     environment:

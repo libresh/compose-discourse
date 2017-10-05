@@ -65,4 +65,4 @@ services:
     networks:
     - back
     volumes:
-    ./data/redis:/data
+    - ./data/redis:/data

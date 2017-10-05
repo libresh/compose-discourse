@@ -1,6 +1,6 @@
 #!/bin/bash -eux
 
-PG_PASSWORD=`cat /dev/random | base64 | head -c 20 | xargs`
+PG_PASSWORD=`< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;`
 
 echo "DISCOURSE_SMTP_ADDRESS=${MAIL_HOST}" > .env
 echo "DISCOURSE_SMTP_USER_NAME=${MAIL_USER}" >> .env

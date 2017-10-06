@@ -7,7 +7,7 @@ networks:
     ipam:
       driver: default
       config:
-      - subnet: 10.2.1.0/30
+      - subnet: 10.2.1.0/29
 services:
   web:
     image: nginx

@@ -13,6 +13,7 @@ services:
     image: nginx
     volumes:
     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    - ./data/nginx:/var/nginx/cache
     environment:
     - VIRTUAL_HOST
     networks:

@@ -5,7 +5,14 @@ PG_PASSWORD=`< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;`
 echo "DISCOURSE_SMTP_ADDRESS=${MAIL_HOST}" > .env
 echo "DISCOURSE_SMTP_USER_NAME=${MAIL_USER}" >> .env
 echo "DISCOURSE_SMTP_PASSWORD=${MAIL_PASS}" >> .env
-echo "POSTGRES_PASSWORD=${PG_PASSWORD}" >> .env
 echo "DISCOURSE_DB_PASSWORD=${PG_PASSWORD}" >> .env
+echo "POSTGRES_PASSWORD=${PG_PASSWORD}" >> .env
 
-VIRTUAL_HOST=${URL} docker-compose run app bash -c "sleep 3 && rake db:migrate assets:precompile"
+mkdir -p ./data/{assets,uploads,backups}
+
+chown -R 1000:1000 ./data/
+
+VIRTUAL_HOST=${URL} docker-compose run app bash -c "sleep 60 && rake db:migrate assets:precompile"
+VIRTUAL_HOST=${URL} docker-compose run app bash -c "rake admin:create"
+
+echo "!!!Configure notification email in discourse settings!!!!!!"

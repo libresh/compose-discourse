@@ -14,19 +14,21 @@ services:
     volumes:
     - ./nginx.conf:/etc/nginx/nginx.conf:ro
     - ./data/nginx:/var/nginx/cache
+    volumes_from:
+    - app
     environment:
     - VIRTUAL_HOST
     networks:
     - back
     - lb_web
+    depends_on:
+    - app
   app:
     image: indiehosters/discourse
     volumes:
       - ./data/assets:/home/discourse/discourse/public/assets
       - ./data/uploads:/home/discourse/discourse/public/uploads
       - ./data/backups:/home/discourse/discourse/public/backups
-    env_file:
-      - ./env
     environment:
     - DISCOURSE_HOSTNAME=$VIRTUAL_HOST
     - POSTGRES_USER=discourse
@@ -35,6 +37,9 @@ services:
     - DISCOURSE_SMTP_USER_NAME
     - DISCOURSE_SMTP_PASSWORD
     - DISCOURSE_DB_PASSWORD
+    depends_on:
+    - redis
+    - postgres
     networks:
     - back
   sidekiq:

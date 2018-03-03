@@ -19,9 +19,9 @@ services:
   app:
     image: indiehosters/discourse
     volumes:
-      - ./data/assets:/usr/src/app/public/assets
-      - ./data/uploads:/usr/src/app/public/uploads
-      - ./data/backups:/usr/src/app/public/backups
+      - ./data/assets:/home/discourse/discourse/public/assets
+      - ./data/uploads:/home/discourse/discourse/public/uploads
+      - ./data/backups:/home/discourse/discourse/public/backups
     links:
       - postgres
       - redis

@@ -2,6 +2,7 @@
 
 PG_PASSWORD=`< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;`
 var=$(for folder in `ls /data/domains`; do cat /data/domains/$folder/.env | grep SUBNET | cut -d"=" -f2; done | sort | tail -n1)
+SUBNET=$(($var +1))
 
 echo "DISCOURSE_SMTP_ADDRESS=${MAIL_HOST}" > .env
 echo "DISCOURSE_SMTP_USER_NAME=${MAIL_USER}" >> .env

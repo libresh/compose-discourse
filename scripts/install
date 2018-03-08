@@ -1,12 +1,14 @@
 #!/bin/bash -eux
 
 PG_PASSWORD=`< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;`
+var=$(for folder in `ls /data/domains`; do cat /data/domains/$folder/.env | grep SUBNET | cut -d"=" -f2; done | sort | tail -n1)
 
 echo "DISCOURSE_SMTP_ADDRESS=${MAIL_HOST}" > .env
 echo "DISCOURSE_SMTP_USER_NAME=${MAIL_USER}" >> .env
 echo "DISCOURSE_SMTP_PASSWORD=${MAIL_PASS}" >> .env
 echo "DISCOURSE_DB_PASSWORD=${PG_PASSWORD}" >> .env
 echo "POSTGRES_PASSWORD=${PG_PASSWORD}" >> .env
+echo "SUBNET=${SUBNET}" >> .env
 
 mkdir -p ./data/{assets,uploads,backups}
 
@@ -16,3 +18,6 @@ VIRTUAL_HOST=${URL} docker-compose run app bash -c "sleep 60 && rake db:migrate 
 VIRTUAL_HOST=${URL} docker-compose run app bash -c "rake admin:create"
 
 echo "!!!Configure notification email in discourse settings!!!!!!"
+
+
+

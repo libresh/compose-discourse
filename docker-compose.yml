@@ -26,9 +26,9 @@ services:
   app:
     image: indiehosters/discourse
     volumes:
-      - ./data/assets:/home/discourse/discourse/public/assets
-      - ./data/uploads:/home/discourse/discourse/public/uploads
-      - ./data/backups:/home/discourse/discourse/public/backups
+    - ./data/assets:/home/discourse/discourse/public/assets
+    - ./data/uploads:/home/discourse/discourse/public/uploads
+    - ./data/backups:/home/discourse/discourse/public/backups
     environment:
     - DISCOURSE_HOSTNAME=$VIRTUAL_HOST
     - POSTGRES_USER=discourse

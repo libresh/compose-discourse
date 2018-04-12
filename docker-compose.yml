@@ -68,6 +68,7 @@ services:
     - POSTGRES_PASSWORD
   redis:
     image: redis:3
+    command: ["--appendonly","yes"]
     networks:
     - back
     volumes:

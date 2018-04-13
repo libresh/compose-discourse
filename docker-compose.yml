@@ -21,7 +21,7 @@ services:
     depends_on:
     - app
   app:
-    image: indiehosters/discourse
+    image: indiehosters/discourse:2.0.0.beta5
     volumes:
     - ./data/assets:/home/discourse/discourse/public/assets
     - ./data/uploads:/home/discourse/discourse/public/uploads
@@ -40,7 +40,7 @@ services:
     networks:
     - back
   sidekiq:
-    image: indiehosters/discourse
+    image: indiehosters/discourse:2.0.0.beta5
     command: bundle exec sidekiq -q critical -q default -q low -v
     environment:
     - DISCOURSE_HOSTNAME=$VIRTUAL_HOST

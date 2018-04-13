@@ -13,6 +13,7 @@ services:
     image: indiehosters/docker-discourse-web:2.0.0.beta5
     volumes:
     - ./data/assets:/home/discourse/discourse/public/assets
+    - ./data/uploads:/home/discourse/discourse/public/uploads
     environment:
     - VIRTUAL_HOST
     networks:

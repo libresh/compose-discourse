@@ -50,8 +50,6 @@ services:
     - DISCOURSE_SMTP_USER_NAME
     - DISCOURSE_SMTP_PASSWORD
     - DISCOURSE_DB_PASSWORD
-    volumes_from:
-    - app
     depends_on:
     - redis
     - postgres

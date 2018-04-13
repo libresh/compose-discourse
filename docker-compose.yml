@@ -65,7 +65,7 @@ services:
     - POSTGRES_USER=discourse
     - POSTGRES_PASSWORD
   redis:
-    image: redis:3
+    image: redis:3-alpine
     command: ["--appendonly","yes"]
     networks:
     - back

@@ -10,7 +10,7 @@ networks:
       - subnet: 10.0.${SUBNET}.0/24
 services:
   web:
-    image: indiehosters/docker-discourse-web:2.0.0.beta5
+    image: indiehosters/discourse-web:${DISCOURSE_VERSION:-2.2.0.beta4}
     volumes:
     - ./data/assets:/home/discourse/discourse/public/assets
     - ./data/uploads:/home/discourse/discourse/public/uploads
@@ -22,29 +22,30 @@ services:
     depends_on:
     - app
   app:
-    image: indiehosters/discourse:2.0.0.beta5
+    image: indiehosters/discourse:${DISCOURSE_VERSION:-2.2.0.beta4}
     volumes:
     - ./data/assets:/home/discourse/discourse/public/assets
     - ./data/uploads:/home/discourse/discourse/public/uploads
     - ./data/backups:/home/discourse/discourse/public/backups
     environment:
-    - DISCOURSE_HOSTNAME=$VIRTUAL_HOST
+    - DISCOURSE_HOSTNAME
     - POSTGRES_USER=discourse
     - DISCOURSE_SMTP_PORT=587
     - DISCOURSE_SMTP_ADDRESS
     - DISCOURSE_SMTP_USER_NAME
     - DISCOURSE_SMTP_PASSWORD
     - DISCOURSE_DB_PASSWORD
+    - DISCOURSE_DB_HOST=postgres
     depends_on:
     - redis
     - postgres
     networks:
     - back
   sidekiq:
-    image: indiehosters/discourse:2.0.0.beta5
+    image: indiehosters/discourse:${DISCOURSE_VERSION:-2.2.0.beta4}
     command: bundle exec sidekiq -q critical -q default -q low -v
     environment:
-    - DISCOURSE_HOSTNAME=$VIRTUAL_HOST
+    - DISCOURSE_HOSTNAME
     - POSTGRES_USER=discourse
     - DISCOURSE_SMTP_PORT=587
     - DISCOURSE_SMTP_ADDRESS
@@ -57,7 +58,7 @@ services:
     networks:
     - back
   postgres:
-    image: postgres:9.5
+    image: postgres:${POSTGRES_VERSION:-10.6}
     volumes:
     - ./data/postgres:/var/lib/postgresql/data
     networks:
@@ -66,7 +67,7 @@ services:
     - POSTGRES_USER=discourse
     - POSTGRES_PASSWORD
   redis:
-    image: redis:3-alpine
+    image: redis:${REDIS_VERSION:-4-alpine}
     command: ["--appendonly","yes"]
     networks:
     - back

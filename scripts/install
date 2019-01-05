@@ -1,20 +1,50 @@
 #!/bin/bash -eux
 
-PG_PASSWORD=`< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;`
 
-echo "DISCOURSE_SMTP_ADDRESS=${MAIL_HOST}" > .env
-echo "DISCOURSE_SMTP_USER_NAME=${MAIL_USER}" >> .env
-echo "DISCOURSE_SMTP_PASSWORD=${MAIL_PASS}" >> .env
-echo "DISCOURSE_DB_PASSWORD=${PG_PASSWORD}" >> .env
-echo "POSTGRES_PASSWORD=${PG_PASSWORD}" >> .env
+# https://stackoverflow.com/questions/19331497/set-environment-variables-from-file-of-key-pair-values#20909045
+# clear enviromnet variables listed in .env
+unset $(grep -v '^#' .env | sed -E 's/(.*)=.*/\1/' | xargs)
+# load .env.
+export $(grep -v '^#' .env | xargs -d '\n')
+export $(grep -v '^#' .env | xargs -0)
+# https://stackoverflow.com/questions/19331497/set-environment-variables-from-file-of-key-pair-values#20909045
+
+
+if [ -z ${VIRTUAL_HOST+x} ]; then 
+	echo -n "Enter VIRTUAL_HOST: "; read VIRTUAL_HOST ; else 
+	echo "VIRTUAL_HOST is set to '$VIRTUAL_HOST'"; fi
+	
+if [ -z ${DISCOURSE_SMTP_ADDRESS+x} ]; then 
+	echo -n "Enter DISCOURSE_SMTP_ADDRESS: "; read DISCOURSE_SMTP_ADDRESS ; else 
+	echo "DISCOURSE_SMTP_ADDRESS is set to '$DISCOURSE_SMTP_ADDRESS'"; fi
+		
+if [ -z ${DISCOURSE_SMTP_USER_NAME+x} ]; then 
+	echo -n "Enter DISCOURSE_SMTP_USER_NAME: "; read DISCOURSE_SMTP_USER_NAME ; else 
+	echo "DISCOURSE_SMTP_USER_NAME is set to '$DISCOURSE_SMTP_USER_NAME'"; fi
+		
+if [ -z ${DISCOURSE_SMTP_PASSWORD+x} ]; then 
+	echo -n "Enter DISCOURSE_SMTP_PASSWORD: "; read DISCOURSE_SMTP_PASSWORD ; else 
+	echo "DISCOURSE_SMTP_PASSWORD is set to '$DISCOURSE_SMTP_PASSWORD'"; fi
+		
+if [ -z ${DISCOURSE_DB_PASSWORD+x} ]; then 
+	# https://unix.stackexchange.com/a/217276/111699 handle tr: Illegal byte sequence on Mac OSX. 
+	DISCOURSE_DB_PASSWORD=$(perl -pe 'binmode(STDIN, ":bytes"); tr/A-Za-z0-9_\!\@\#\$\%\^\&\*\(\)-+=//dc;' < /dev/urandom | head -c 32 ; echo); else
+	echo "DISCOURSE_DB_PASSWORD is set to '$DISCOURSE_DB_PASSWORD'"; fi
+
+echo "VIRTUAL_HOST=${VIRTUAL_HOST}"	> .env
+echo "DISCOURSE_SMTP_ADDRESS=${DISCOURSE_SMTP_ADDRESS}" >> .env
+echo "DISCOURSE_SMTP_USER_NAME=${DISCOURSE_SMTP_USER_NAME}" >> .env
+echo "DISCOURSE_SMTP_PASSWORD=${DISCOURSE_SMTP_PASSWORD}" >> .env
+echo "DISCOURSE_DB_PASSWORD=${DISCOURSE_DB_PASSWORD}" >> .env
+echo "POSTGRES_PASSWORD=${DISCOURSE_DB_PASSWORD}" >> .env
 echo "SUBNET=${SUBNET:-0}" >> .env
 echo "POSTGRES_VERSION=10.6" >> .env
 
 mkdir -p ./data/{assets,uploads,backups,redis,postgres}
 
-chown -R 1000:1000 ./data/
+chown -R 1000:1000 ./data || true # || true handles if chown -R 1000:1000 fails on Mac OSX
 
-VIRTUAL_HOST=${URL} docker-compose run app bash -c "sleep 60 && bundle exec rake maxminddb:get db:migrate assets:precompile"
-VIRTUAL_HOST=${URL} docker-compose run app bash -c "rake admin:create"
+VIRTUAL_HOST=${VIRTUAL_HOST} docker-compose run app bash -c "sleep 60 && bundle exec rake maxminddb:get db:migrate assets:precompile"
+VIRTUAL_HOST=${VIRTUAL_HOST} docker-compose run app bash -c "bundle exec rake admin:create"
 
 echo "!!!Configure notification email in discourse settings!!!!!!"

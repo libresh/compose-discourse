@@ -4,10 +4,6 @@ networks:
     external: true
   back:
     driver: bridge
-    ipam:
-      driver: default
-      config:
-      - subnet: 10.0.${SUBNET}.0/24
 services:
   web:
     image: indiehosters/discourse-web:${DISCOURSE_VERSION:-2.2.0.beta4}
@@ -44,6 +40,8 @@ services:
   sidekiq:
     image: indiehosters/discourse:${DISCOURSE_VERSION:-2.2.0.beta4}
     command: bundle exec sidekiq -q critical -q default -q low -v
+    volumes:
+    - ./data/assets:/home/discourse/discourse/public/assets
     environment:
     - DISCOURSE_HOSTNAME
     - POSTGRES_USER=discourse
